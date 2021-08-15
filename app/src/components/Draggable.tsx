@@ -28,15 +28,19 @@ class Draggable extends React.Component<Props, State> {
   componentDidUpdate = (props: Props, state: State) => {
     if (this.state.dragging && !state.dragging) {
       document.addEventListener('mousemove', this.onMouseMove);
+      document.addEventListener('touchmove', this.onMouseMove);
       document.addEventListener('mouseup', this.onMouseUp);
+      document.addEventListener('touchend', this.onMouseUp);
     } else if (!this.state.dragging && state.dragging) {
       document.removeEventListener('mousemove', this.onMouseMove);
+      document.removeEventListener('touchmove', this.onMouseMove);
       document.removeEventListener('mouseup', this.onMouseUp);
+      document.removeEventListener('touchend', this.onMouseUp);
     }
   }
 
-  onMouseDown = (e: MouseEvent) => {
-    if (e.button !== 0) {
+  onMouseDown = (e: MouseEvent | TouchEvent) => {
+    if (e instanceof MouseEvent && e.button !== 0) {
       return;
     }
 
@@ -63,7 +67,7 @@ class Draggable extends React.Component<Props, State> {
     e.preventDefault();
   }
 
-  onMouseUp = (e: MouseEvent) => {
+  onMouseUp = (e: MouseEvent | TouchEvent) => {
     this.setState({
       dragging: false,
     });
@@ -71,7 +75,7 @@ class Draggable extends React.Component<Props, State> {
     e.preventDefault();
   }
 
-  onMouseMove = (e: MouseEvent) => {
+  onMouseMove = (e: MouseEvent | TouchEvent) => {
     if (!this.state.dragging) {
       return;
     }
@@ -91,17 +95,31 @@ class Draggable extends React.Component<Props, State> {
       top: this.state.currentPosition.y + 'px',
     };
 
-    return (<div ref={el => this.reference = el} onMouseDown={(e) => this.onMouseDown(e.nativeEvent)} style={style}>
+    return (<div
+      ref={el => this.reference = el}
+      style={style}
+      onMouseDown={(e) => this.onMouseDown(e.nativeEvent)}
+      onTouchStart={(e) => this.onMouseDown(e.nativeEvent)}>
       {this.props.children}
     </div>);
   }
 
-  getNewPosition = (e: MouseEvent, position: Position): Position => {
-    const newPosition = {
-      x: e.pageX - position.x,
-      y: e.pageY - position.y,
-    };
-    return newPosition;
+  getNewPosition = (e: MouseEvent | TouchEvent, position: Position): Position => {
+    if (e instanceof MouseEvent) {
+      const newPosition = {
+        x: e.pageX - position.x,
+        y: e.pageY - position.y,
+      };
+      return newPosition;
+    }
+    if (e instanceof TouchEvent) {
+      const newPosition = {
+        x: e.touches[0].pageX - position.x,
+        y: e.touches[0].pageX - position.y,
+      };
+      return newPosition;
+    }
+    return position;
   }
 }
 
