@@ -115,7 +115,7 @@ class Draggable extends React.Component<Props, State> {
     if (e instanceof TouchEvent) {
       const newPosition = {
         x: e.touches[0].pageX - position.x,
-        y: e.touches[0].pageX - position.y,
+        y: e.touches[0].pageY - position.y,
       };
       return newPosition;
     }
