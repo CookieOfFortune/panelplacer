@@ -4,6 +4,7 @@ import './App.css';
 import Draggable from './components/Draggable';
 
 const BG_WIDTH_INCH = 102.7;
+const BG_HEIGHT_INCH = 77;
 const PANEL_HEIGHT_INCH = 36;
 
 interface Size {
@@ -15,13 +16,19 @@ function App() {
   const size: Size = useWindowSize();
 
   let height = 0;
-  if (size.width != null) {
-    height = (size.width / BG_WIDTH_INCH) * PANEL_HEIGHT_INCH;
+  if (size.width != null && size.height != null) {
+    const panelHeightFromWidth = (size.width / BG_WIDTH_INCH) * PANEL_HEIGHT_INCH;
+    const pnaleHeightFromHeight = (size.height / BG_HEIGHT_INCH) * PANEL_HEIGHT_INCH;
+    if (panelHeightFromWidth < pnaleHeightFromHeight) {
+      height = panelHeightFromWidth;
+    } else {
+      height = pnaleHeightFromHeight;
+    }
   }
 
   let widthOffset = 100;
   if (size.width != null) {
-    widthOffset = size.width / 4;
+    widthOffset = size.width / 6;
   }
 
   const panels = [1, 2, 3, 4].map(i => {
