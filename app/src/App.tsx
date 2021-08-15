@@ -26,14 +26,9 @@ function App() {
     }
   }
 
-  let widthOffset = 100;
-  if (size.width != null) {
-    widthOffset = size.width / 6;
-  }
-
   const panels = [1, 2, 3, 4].map(i => {
     return (
-      <Draggable key={i} initialPosition={{ x: widthOffset * i, y: height }}>
+      <Draggable key={i} initialPosition={{ x: 0, y: height }}>
         <img src={logo} alt={"panel" + i} height={height + "px"} />
       </Draggable>);
   });
